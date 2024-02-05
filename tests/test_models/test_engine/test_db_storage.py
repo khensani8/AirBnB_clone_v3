@@ -86,3 +86,39 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+class TestDBStorageMethods(unittest.TestCase):
+    """Tests for the get and count methods in DBStorage class"""
+
+    def setUp(self):
+        """Set up for the tests"""
+        self.db_storage = DBStorage()
+        self.user = User()
+        self.user_id = self.user.id
+        self.db_storage.new(self.user)
+        self.db_storage.save()
+
+    def test_get_method(self):
+        """Test get method in DBStorage."""
+        retrieved_user = self.db_storage.get(User, self.user_id)
+        self.assertEqual(self.user, retrieved_user)
+
+    def test_get_method_returns_none_if_not_found(self):
+        """Test get method returns None if object is not found."""
+        non_existent_user_id = "non_existent_id"
+        non_existent_user = self.db_storage.get(User, non_existent_user_id)
+        self.assertIsNone(non_existent_user)
+
+    def test_count_method_counts_all_objects(self):
+        """Test count method counts all objects."""
+        count_all_objects = self.db_storage.count()
+        self.assertEqual(count_all_objects, 1)
+
+    def test_count_method_counts_objects_of_specific_class(self):
+        """Test count method counts objects of a specific class."""
+        count_user_objects = self.db_storage.count(User)
+        self.assertEqual(count_user_objects, 1)
+
+    def tearDown(self):
+        """Tear down after the tests"""
+        self.db_storage.close()
