@@ -70,7 +70,7 @@ class DBStorage:
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
         self.__session = Session
-        
+
     def get(self, cls, id):
         """
         returns object based on it's class and id
@@ -92,7 +92,8 @@ class DBStorage:
         if cls is not None:
             count = self.__session.query(cls).count()
         else:
-            count = sum(self.__session.query(c).count() for c in classes.values())
+            count = sum(self.__session.query(c).count()
+                      for c in classes.values())
         return count
 
     def close(self):
